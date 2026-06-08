@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos base de la app */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Fuerza a todos los controles de formulario a renderizar en modo claro,
+     evitando que el modo oscuro del sistema operativo pinte los inputs
+     con fondo negro en macOS / Windows / iOS. */
+  color-scheme: light;
+}
+
+/* Safe area para notches iOS */
+.safe-top { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
+/* Contenedor principal para que Tailwind !important tenga scope */
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Utilidades para el canvas de firma */
+.signature-canvas {
+  touch-action: none;
+  cursor: crosshair;
+}
+
+/* Reset explícito de inputs nativos: garantiza fondo blanco y texto
+   oscuro aunque el navegador intente aplicar su tema oscuro. */
+input,
+textarea,
+select,
+button {
+  color-scheme: light;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #a1a1aa; /* zinc-400 */
+  opacity: 1;
+}
