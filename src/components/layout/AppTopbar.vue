@@ -211,8 +211,14 @@ function goToSettings() {
 
 async function logout() {
   userMenuOpen.value = false;
-  await session.logout();
-  router.replace('/login');
+  try {
+    await session.logout();
+    notify.push('Sesión cerrada', 'success');
+  } catch (e) {
+    console.error('Logout error:', e);
+  }
+  // SIEMPRE navegar al login, incluso si logout falló
+  await router.push('/login').catch((e) => console.error('Nav error:', e));
 }
 
 /**
@@ -228,11 +234,13 @@ async function onLogoutClick() {
   try {
     await session.logout();
     notify.push('Sesión cerrada', 'success');
-    router.replace('/login');
   } catch (e) {
+    console.error('Logout error:', e);
     notify.push('No se pudo cerrar la sesión', 'danger');
   } finally {
     loggingOut.value = false;
+    // SIEMPRE navegar al login (incluso si la limpieza de sesión falló)
+    await router.push('/login').catch((e) => console.error('Nav error:', e));
   }
 }
 
