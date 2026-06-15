@@ -1,96 +1,102 @@
 <template>
+  <!-- Contenedor full-screen que centra el card vertical y horizontalmente -->
   <div
-    class="w-full bg-white/85 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/60 p-6 sm:p-8"
-    style="max-width: 28rem;"
+    class="min-h-screen min-h-[100dvh] w-full flex items-center justify-center p-4 sm:p-6"
+    style="background-color: #f5f3ff; background-image: linear-gradient(rgba(99,102,241,0.10) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.10) 1px, transparent 1px), linear-gradient(135deg, #eef2ff 0%, #e0e7ff 40%, #ede9fe 75%, #ddd6fe 100%); background-size: 32px 32px, 32px 32px, 100% 100%;"
   >
-    <!-- Logo -->
-    <div class="flex flex-col items-center mb-6">
-      <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white shadow-lg mb-3">
-        <ion-icon :icon="settingsOutline" class="text-2xl" />
+    <div
+      class="w-full bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/60 p-6 sm:p-8 mx-auto"
+      style="max-width: 28rem;"
+    >
+      <!-- Logo -->
+      <div class="flex flex-col items-center mb-6">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white shadow-lg mb-3">
+          <ion-icon :icon="settingsOutline" class="text-2xl" />
+        </div>
+        <h1 class="text-2xl font-bold text-zinc-900 tracking-tight">ProMaintenance</h1>
+        <p class="text-xs text-zinc-500 uppercase tracking-wider mt-0.5">CMMS SaaS · Multi-Tenant</p>
       </div>
-      <h1 class="text-2xl font-bold text-zinc-900 tracking-tight">ProMaintenance</h1>
-      <p class="text-xs text-zinc-500 uppercase tracking-wider mt-0.5">CMMS SaaS · Multi-Tenant</p>
-    </div>
 
-    <!-- Tenant selector -->
-    <div class="mb-4">
-      <label class="block text-xs font-semibold text-zinc-700 mb-1.5">Empresa (Tenant)</label>
-      <div class="grid grid-cols-1 gap-2">
-        <button
-          v-for="t in tenants"
-          :key="t.id"
-          class="text-left px-3 py-2.5 rounded-lg border-2 transition-all"
-          :class="t.id === selectedTenantId ? 'border-primary-500 bg-primary-50/50' : 'border-zinc-200 hover:border-zinc-300'"
-          @click="selectedTenantId = t.id"
+      <!-- Tenant selector -->
+      <div class="mb-4">
+        <label class="block text-xs font-semibold text-zinc-700 mb-1.5">Empresa (Tenant)</label>
+        <div class="grid grid-cols-1 gap-2">
+          <button
+            v-for="t in tenants"
+            :key="t.id"
+            class="text-left px-3 py-2.5 rounded-lg border-2 transition-all"
+            :class="t.id === selectedTenantId ? 'border-primary-500 bg-primary-50/50' : 'border-zinc-200 hover:border-zinc-300'"
+            @click="selectedTenantId = t.id"
+          >
+            <p class="text-sm font-semibold text-zinc-900 truncate">{{ t.name }}</p>
+            <p class="text-[11px] text-zinc-500">Plan {{ t.plan }} · {{ t.id }}</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- Role selector -->
+      <div class="mb-4">
+        <label class="block text-xs font-semibold text-zinc-700 mb-1.5">Rol</label>
+        <div class="grid grid-cols-2 gap-1.5">
+          <button
+            v-for="r in availableRoles"
+            :key="r.value"
+            class="px-2.5 py-2 rounded-lg border-2 transition-all flex flex-col items-center gap-0.5"
+            :class="r.value === selectedRole ? 'border-primary-500 bg-primary-50/50' : 'border-zinc-200 hover:border-zinc-300'"
+            @click="selectedRole = r.value"
+          >
+            <ion-icon :icon="r.icon" :class="r.value === selectedRole ? 'text-primary-600' : 'text-zinc-400'" class="text-lg" />
+            <span class="text-[11px] font-semibold text-zinc-800">{{ r.label }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-4">
+        <FormField
+          v-model="email"
+          label="Correo electrónico"
+          type="email"
+          placeholder="usuario@empresa.com"
+          :prefix-icon="mailOutline"
         >
-          <p class="text-sm font-semibold text-zinc-900 truncate">{{ t.name }}</p>
-          <p class="text-[11px] text-zinc-500">Plan {{ t.plan }} · {{ t.id }}</p>
-        </button>
+          <template #prefix>
+            <ion-icon :icon="mailOutline" />
+          </template>
+        </FormField>
       </div>
-    </div>
 
-    <!-- Role selector -->
-    <div class="mb-4">
-      <label class="block text-xs font-semibold text-zinc-700 mb-1.5">Rol</label>
-      <div class="grid grid-cols-2 gap-1.5">
-        <button
-          v-for="r in availableRoles"
-          :key="r.value"
-          class="px-2.5 py-2 rounded-lg border-2 transition-all flex flex-col items-center gap-0.5"
-          :class="r.value === selectedRole ? 'border-primary-500 bg-primary-50/50' : 'border-zinc-200 hover:border-zinc-300'"
-          @click="selectedRole = r.value"
-        >
-          <ion-icon :icon="r.icon" :class="r.value === selectedRole ? 'text-primary-600' : 'text-zinc-400'" class="text-lg" />
-          <span class="text-[11px] font-semibold text-zinc-800">{{ r.label }}</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Email -->
-    <div class="mb-4">
-      <FormField
-        v-model="email"
-        label="Correo electrónico"
-        type="email"
-        placeholder="usuario@empresa.com"
-        :prefix-icon="mailOutline"
+      <!-- Login button -->
+      <ion-button
+        expand="block"
+        :disabled="loading || !canLogin"
+        class="font-semibold !h-12"
+        @click="onLogin"
       >
-        <template #prefix>
-          <ion-icon :icon="mailOutline" />
-        </template>
-      </FormField>
+        <ion-icon slot="start" :icon="logInOutline" />
+        {{ loading ? 'Ingresando...' : 'Ingresar' }}
+      </ion-button>
+
+      <!-- Divider -->
+      <div class="my-5 flex items-center gap-3">
+        <div class="flex-1 h-px bg-zinc-200" />
+        <span class="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">o</span>
+        <div class="flex-1 h-px bg-zinc-200" />
+      </div>
+
+      <!-- Portal del cliente -->
+      <button
+        class="w-full px-4 py-2.5 rounded-lg border-2 border-zinc-200 text-sm font-semibold text-zinc-700 hover:border-primary-300 hover:bg-primary-50/30 transition-colors flex items-center justify-center gap-2"
+        @click="router.push('/portal/login')"
+      >
+        <ion-icon :icon="globeOutline" />
+        Acceder al Portal del Cliente
+      </button>
+
+      <p class="text-[11px] text-zinc-400 text-center mt-5">
+        Demo · sin backend real · datos mock en localStorage
+      </p>
     </div>
-
-    <!-- Login button -->
-    <ion-button
-      expand="block"
-      :disabled="loading || !canLogin"
-      class="font-semibold !h-12"
-      @click="onLogin"
-    >
-      <ion-icon slot="start" :icon="logInOutline" />
-      {{ loading ? 'Ingresando...' : 'Ingresar' }}
-    </ion-button>
-
-    <!-- Divider -->
-    <div class="my-5 flex items-center gap-3">
-      <div class="flex-1 h-px bg-zinc-200" />
-      <span class="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">o</span>
-      <div class="flex-1 h-px bg-zinc-200" />
-    </div>
-
-    <!-- Portal del cliente -->
-    <button
-      class="w-full px-4 py-2.5 rounded-lg border-2 border-zinc-200 text-sm font-semibold text-zinc-700 hover:border-primary-300 hover:bg-primary-50/30 transition-colors flex items-center justify-center gap-2"
-      @click="router.push('/portal/login')"
-    >
-      <ion-icon :icon="globeOutline" />
-      Acceder al Portal del Cliente
-    </button>
-
-    <p class="text-[11px] text-zinc-400 text-center mt-5">
-      Demo · sin backend real · datos mock en localStorage
-    </p>
   </div>
 </template>
 

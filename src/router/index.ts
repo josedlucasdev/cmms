@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from '@ionic/vue-router';
+import { createRouter, createWebHashHistory, createWebHistory } from '@ionic/vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 import { useSessionStore } from '@/stores/session';
 import type { Role } from '@/types/domain';
@@ -179,9 +179,30 @@ const routes: RouteRecordRaw[] = [
 
 // =====================================================================
 //  Router
+//  Se usa `createWebHashHistory` en hosting estático (GitHub Pages, etc.)
+//  donde el servidor no puede hacer SPA fallback. En desarrollo local
+//  se usa `createWebHistory` para URLs limpias.
 // =====================================================================
+function pickHistory() {
+  if (typeof window === 'undefined') {
+    return createWebHashHistory(import.meta.env.BASE_URL);
+  }
+  const host = window.location.hostname;
+  const isStaticHost =
+    host.endsWith('github.io') ||
+    host.endsWith('netlify.app') ||
+    host.endsWith('vercel.app') ||
+    host.endsWith('gitlab.io') ||
+    host.endsWith('surge.sh') ||
+    host === 'localhost' ||
+    host === '127.0.0.1';
+  return isStaticHost
+    ? createWebHashHistory(import.meta.env.BASE_URL)
+    : createWebHistory(import.meta.env.BASE_URL);
+}
+
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: pickHistory(),
   routes,
 });
 

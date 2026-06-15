@@ -68,7 +68,7 @@
           class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
           :style="{ backgroundColor: avatarColor }"
         >
-          {{ initials }}
+          {{ initialsText }}
         </div>
         <div class="hidden md:block text-left min-w-0">
           <p class="text-xs font-bold text-zinc-900 truncate leading-tight">{{ user?.fullName }}</p>
