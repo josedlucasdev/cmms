@@ -1,0 +1,1 @@
+import{a_ as u,v as f}from"./index-9Uo-AqQb.js";const l=u("notification",()=>{const t=f([]);let i=1;function s(a,n="primary",e=2500){const o=i++;t.value.push({id:o,message:a,color:n,duration:e}),setTimeout(()=>{t.value=t.value.filter(r=>r.id!==o)},e)}return{toasts:t,push:s}});export{l as u};

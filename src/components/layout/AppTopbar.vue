@@ -58,6 +58,17 @@
       <span>Sincronizar</span>
     </button>
 
+    <!-- Botón directo de cerrar sesión (visible siempre) -->
+    <button
+      class="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-zinc-200 text-zinc-700 text-xs font-semibold hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
+      :disabled="loggingOut"
+      :title="'Cerrar sesión y volver al login'"
+      @click="onLogoutClick"
+    >
+      <ion-icon :icon="logOutOutline" class="text-base" />
+      <span class="hidden sm:inline">{{ loggingOut ? 'Saliendo...' : 'Cerrar sesión' }}</span>
+    </button>
+
     <!-- User avatar -->
     <div class="relative">
       <button
@@ -145,6 +156,7 @@ const { online } = storeToRefs(network);
 const userMenuOpen = ref(false);
 const mobileMenuOpen = ref(false);
 const searchQuery = ref('');
+const loggingOut = ref(false);
 
 const avatarColor = computed(() => colorFromString(user.value?.fullName ?? 'U'));
 const initialsText = computed(() => initials(user.value?.fullName ?? 'U U'));
@@ -201,6 +213,27 @@ async function logout() {
   userMenuOpen.value = false;
   await session.logout();
   router.replace('/login');
+}
+
+/**
+ * Handler del botón directo en el topbar.
+ * Muestra confirmación antes de salir para evitar cierres accidentales.
+ */
+async function onLogoutClick() {
+  if (loggingOut.value) return;
+  const ok = window.confirm('¿Cerrar sesión y volver al login?');
+  if (!ok) return;
+  loggingOut.value = true;
+  userMenuOpen.value = false;
+  try {
+    await session.logout();
+    notify.push('Sesión cerrada', 'success');
+    router.replace('/login');
+  } catch (e) {
+    notify.push('No se pudo cerrar la sesión', 'danger');
+  } finally {
+    loggingOut.value = false;
+  }
 }
 
 function handleClickOutside() {
